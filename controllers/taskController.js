@@ -3,9 +3,29 @@ const Task = require('../models/task')
 const getTasks = async (req, res) => {
   try {
     const tareas = await Task.find()
+    // Cache: el cliente guarda la respuesta 60 segundos
+    res.set('Cache-Control', 'public, max-age=60')
     res.json(tareas)
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener las tareas' })
+  }
+}
+
+const getTaskById = async (req, res) => {
+  try {
+    const tarea = await Task.findById(req.params.id)
+    if (!tarea) {
+      return res.status(404).json({ mensaje: 'Tarea no encontrada' })
+    }
+    // ETag: un "identificador" único de esta versión del recurso
+    const etag = `"${tarea._id}-${tarea.updatedAt || tarea.fechaCreacion}"`
+    // Si el cliente ya tiene esta versión, no se la mandamos de nuevo
+    if (req.headers['if-none-match'] === etag) {
+      return res.status(304).end() // Not Modified
+    }
+    res.json(tarea)
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener la tarea' })
   }
 }
 
@@ -37,4 +57,4 @@ const eliminarTask = async (req, res) => {
   }
 }
 
-module.exports = { getTasks, crearTask, actualizarTask, eliminarTask }
+module.exports = { getTasks, getTaskById, crearTask, actualizarTask, eliminarTask }
