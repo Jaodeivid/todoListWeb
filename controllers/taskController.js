@@ -3,6 +3,10 @@ const Task = require('../models/task')
 const getTasks = async (req, res) => {
   try {
     const tareas = await Task.find()
+    // Metadatos en los headers
+    res.set('X-Total-Count', tareas.length) 
+    res.set('X-Resource', 'tareas')
+    res.set('Last-Modified', new Date().toUTCString())
     // Cache: el cliente guarda la respuesta 60 segundos
     res.set('Cache-Control', 'public, max-age=60')
     res.json(tareas)
@@ -23,6 +27,11 @@ const getTaskById = async (req, res) => {
     if (req.headers['if-none-match'] === etag) {
       return res.status(304).end() // Not Modified
     }
+    // Headers de metadatos
+    res.set('ETag', etag)
+    res.set('X-Task-ID', tarea._id.toString())
+    res.set('X-Completada', tarea.completada.toString())
+    res.set('Cache-Control', 'private, max-age=120')
     res.json(tarea)
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener la tarea' })
@@ -33,6 +42,10 @@ const crearTask = async (req, res) => {
   try {
     const nuevaTask = new Task(req.body)
     const resultado = await nuevaTask.save()
+    // Metadatos de lo que se creó
+    res.set('X-Task-ID', resultado._id.toString())
+    res.set('Location', `/tareas/${resultado._id}`)
+    res.set('Cache-Control', 'no-store')
     res.status(201).json(resultado)
   } catch (error) {
     res.status(400).json({ mensaje: 'Error al crear la tarea' })
