@@ -3,13 +3,6 @@ const Task = require('../models/task')
 const getTasks = async (req, res) => {
   try {
     const tareas = await Task.find()
-<<<<<<< HEAD
-    // Metadatos en los headers
-    res.set('X-Total-Count', tareas.length) 
-    res.set('X-Resource', 'tareas')
-    res.set('Last-Modified', new Date().toUTCString())
-    // Cache: el cliente guarda la respuesta 60 segundos
-=======
     const ultimaModificacion = tareas.reduce(
       (max, t) => (t.updatedAt > max ? t.updatedAt : max),
       new Date(0)
@@ -17,7 +10,6 @@ const getTasks = async (req, res) => {
     res.set('X-Total-Count', tareas.length)
     res.set('X-Resource', 'tareas')
     res.set('Last-Modified', ultimaModificacion.toUTCString())
->>>>>>> eb0aa4e47575524c2b54eab15af4beaffa17b54d
     res.set('Cache-Control', 'public, max-age=60')
     res.json(tareas)
   } catch (error) {
