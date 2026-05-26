@@ -3,11 +3,21 @@ const Task = require('../models/task')
 const getTasks = async (req, res) => {
   try {
     const tareas = await Task.find()
+<<<<<<< HEAD
     // Metadatos en los headers
     res.set('X-Total-Count', tareas.length) 
     res.set('X-Resource', 'tareas')
     res.set('Last-Modified', new Date().toUTCString())
     // Cache: el cliente guarda la respuesta 60 segundos
+=======
+    const ultimaModificacion = tareas.reduce(
+      (max, t) => (t.updatedAt > max ? t.updatedAt : max),
+      new Date(0)
+    )
+    res.set('X-Total-Count', tareas.length)
+    res.set('X-Resource', 'tareas')
+    res.set('Last-Modified', ultimaModificacion.toUTCString())
+>>>>>>> eb0aa4e47575524c2b54eab15af4beaffa17b54d
     res.set('Cache-Control', 'public, max-age=60')
     res.json(tareas)
   } catch (error) {
@@ -55,6 +65,12 @@ const crearTask = async (req, res) => {
 const actualizarTask = async (req, res) => {
   try {
     const taskActualizada = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    if (!taskActualizada) {
+      return res.status(404).json({ mensaje: 'Tarea no encontrada' })
+    }
+    const etag = `"${taskActualizada._id}-${taskActualizada.updatedAt}"`
+    res.set('ETag', etag)
+    res.set('Cache-Control', 'no-cache')
     res.json(taskActualizada)
   } catch (error) {
     res.status(400).json({ mensaje: 'Error al actualizar la tarea' })
@@ -63,7 +79,11 @@ const actualizarTask = async (req, res) => {
 
 const eliminarTask = async (req, res) => {
   try {
-    await Task.findByIdAndDelete(req.params.id)
+    const eliminada = await Task.findByIdAndDelete(req.params.id)
+    if (!eliminada) {
+      return res.status(404).json({ mensaje: 'Tarea no encontrada' })
+    }
+    res.set('X-Deleted-ID', req.params.id)
     res.json({ mensaje: 'Tarea eliminada' })
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al eliminar la tarea' })
