@@ -9,34 +9,38 @@ function TaskList() {
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    cargarTareas()
+    getTasks().then(data => {
+      setTareas(data)
+      setCargando(false)
+    })
   }, [])
-
-  const cargarTareas = async () => {
-    setCargando(true)
-    const data = await getTasks()
-    setTareas(data)
-    setCargando(false)
-  }
 
   const handleGuardar = async (datos) => {
     if (tareaEditar) {
-      await actualizarTask(tareaEditar._id, datos)
+      setTareas(prev => prev.map(t =>
+        t._id === tareaEditar._id ? { ...t, ...datos } : t
+      ))
       setTareaEditar(null)
+      actualizarTask(tareaEditar._id, datos)
     } else {
-      await crearTask(datos)
+      const idTemporal = 'temp-' + Date.now()
+      const tareaTemp = { _id: idTemporal, completada: false, ...datos }
+      setTareas(prev => [...prev, tareaTemp])
+      const nueva = await crearTask(datos)
+      setTareas(prev => prev.map(t => t._id === idTemporal ? nueva : t))
     }
-    cargarTareas()
   }
 
-  const handleEliminar = async (id) => {
-    await eliminarTask(id)
-    cargarTareas()
+  const handleEliminar = (id) => {
+    setTareas(prev => prev.filter(t => t._id !== id))
+    eliminarTask(id)
   }
 
-  const handleToggle = async (id, completadaActual) => {
-    await actualizarTask(id, { completada: !completadaActual })
-    cargarTareas()
+  const handleToggle = (id, completadaActual) => {
+    setTareas(prev => prev.map(t =>
+      t._id === id ? { ...t, completada: !completadaActual } : t
+    ))
+    actualizarTask(id, { completada: !completadaActual })
   }
 
   return (
