@@ -3,17 +3,17 @@ import TaskItem from './TaskItem'
 import TaskForm from './TaskForm'
 import { getTasks, crearTask, actualizarTask, eliminarTask } from '../services/taskService'
 
-function TaskList() {
+function TaskList({ token }) {
   const [tareas, setTareas] = useState([])
   const [tareaEditar, setTareaEditar] = useState(null)
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    getTasks().then(data => {
+    getTasks(token).then(data => {
       setTareas(data)
       setCargando(false)
     })
-  }, [])
+  }, [token])
 
   const handleGuardar = async (datos) => {
     if (tareaEditar) {
@@ -21,26 +21,27 @@ function TaskList() {
         t._id === tareaEditar._id ? { ...t, ...datos } : t
       ))
       setTareaEditar(null)
-      actualizarTask(tareaEditar._id, datos)
+      actualizarTask(token, tareaEditar._id, datos)
     } else {
       const idTemporal = 'temp-' + Date.now()
       const tareaTemp = { _id: idTemporal, completada: false, ...datos }
       setTareas(prev => [...prev, tareaTemp])
-      const nueva = await crearTask(datos)
+
+      const nueva = await crearTask(token, datos)
       setTareas(prev => prev.map(t => t._id === idTemporal ? nueva : t))
     }
   }
 
   const handleEliminar = (id) => {
     setTareas(prev => prev.filter(t => t._id !== id))
-    eliminarTask(id)
+    eliminarTask(token, id)
   }
 
   const handleToggle = (id, completadaActual) => {
     setTareas(prev => prev.map(t =>
       t._id === id ? { ...t, completada: !completadaActual } : t
     ))
-    actualizarTask(id, { completada: !completadaActual })
+    actualizarTask(token, id, { completada: !completadaActual })
   }
 
   return (

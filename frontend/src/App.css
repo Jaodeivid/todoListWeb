@@ -109,3 +109,32 @@ h1 {
   margin-top: 1.5rem;
   font-size: 0.9rem;
 }
+
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-card h1 { font-size: 1.3rem; margin-bottom: 1rem; }
+.login-error { color: #c00; font-size: 0.82rem; }
+.login-toggle { font-size: 0.85rem; color: #666; margin-top: 1rem; text-align: center; }
+.login-toggle span { color: #222; cursor: pointer; text-decoration: underline; }
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+}
