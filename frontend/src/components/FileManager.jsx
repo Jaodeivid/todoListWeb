@@ -7,7 +7,11 @@ function FileManager({ token }) {
   const [error, setError] = useState('')
   const inputRef = useRef(null)
 
-  useEffect(() => { cargarArchivos() }, [])
+  useEffect(() => {
+    listarArchivos(token)
+      .then(data => setArchivos(data.archivos ?? []))
+      .catch(() => setArchivos([]))
+  }, [token])
 
   const cargarArchivos = async () => {
     try {
