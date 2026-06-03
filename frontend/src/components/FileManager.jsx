@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { listarArchivos, subirArchivo, bajarArchivo, eliminarArchivo } from '../services/fileService'
 
-function FileManager() {
+function FileManager({ token }) {
   const [archivos, setArchivos] = useState([])
   const [archivo, setArchivo] = useState(null)
   const [error, setError] = useState('')
@@ -11,7 +11,7 @@ function FileManager() {
 
   const cargarArchivos = async () => {
     try {
-      const data = await listarArchivos()
+      const data = await listarArchivos(token)
       setArchivos(data.archivos ?? [])
     } catch {
       setArchivos([])
@@ -22,7 +22,7 @@ function FileManager() {
     if (!archivo) return
     setError('')
     try {
-      await subirArchivo(archivo)
+      await subirArchivo(token, archivo)
       setArchivos(prev => prev.includes(archivo.name) ? prev : [...prev, archivo.name])
       setArchivo(null)
       if (inputRef.current) inputRef.current.value = ''
@@ -37,17 +37,17 @@ function FileManager() {
   }
 
   const handleDescargar = async (nombre) => {
-    try { await bajarArchivo(nombre) }
+    try { await bajarArchivo(token, nombre) }
     catch { setError('No se pudo descargar el archivo.') }
   }
 
   const handleEliminar = async (nombre) => {
     setArchivos(prev => prev.filter(a => a !== nombre))
     try {
-      await eliminarArchivo(nombre)
+      await eliminarArchivo(token, nombre)
     } catch {
       setError('No se pudo eliminar el archivo.')
-      cargarArchivos()
+      cargarArchivos(token)
     }
   }
 
