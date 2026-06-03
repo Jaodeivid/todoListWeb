@@ -4,7 +4,7 @@ import { loginService, registroService } from '../services/authService'
 
 function Login() {
   const { login } = useAuth()
-  const [modo, setModo] = useState('login')   // 'login' | 'registro'
+  const [modo, setModo] = useState('login')
   const [form, setForm] = useState({ nombre: '', email: '', password: '' })
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(false)
