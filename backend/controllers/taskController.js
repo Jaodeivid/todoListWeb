@@ -23,13 +23,10 @@ const getTaskById = async (req, res) => {
     if (!tarea) {
       return res.status(404).json({ mensaje: 'Tarea no encontrada' })
     }
-    // ETag: un "identificador" único de esta versión del recurso
     const etag = `"${tarea._id}-${tarea.updatedAt || tarea.fechaCreacion}"`
-    // Si el cliente ya tiene esta versión, no se la mandamos de nuevo
     if (req.headers['if-none-match'] === etag) {
-      return res.status(304).end() // Not Modified
+      return res.status(304).end() 
     }
-    // Headers de metadatos
     res.set('ETag', etag)
     res.set('X-Task-ID', tarea._id.toString())
     res.set('X-Completada', tarea.completada.toString())
@@ -44,7 +41,6 @@ const crearTask = async (req, res) => {
   try {
     const nuevaTask = new Task(req.body)
     const resultado = await nuevaTask.save()
-    // Metadatos de lo que se creó
     res.set('X-Task-ID', resultado._id.toString())
     res.set('Location', `/tareas/${resultado._id}`)
     res.set('Cache-Control', 'no-store')
