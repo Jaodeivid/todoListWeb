@@ -25,7 +25,9 @@ cd todoListWeb
 
 ### Paso 2: Configurar Variables de Entorno
 
-#### Crear archivo `.env` en la carpeta `backend/`
+**Recomendación:** Usa Opción A para desarrollo rápido. Usa Opción B para probar comportamientos específicos de HTTPS en el frontend.
+
+#### 2A. Crear archivo `.env` en la carpeta `backend/`
 
 ```bash
 cd backend
@@ -64,6 +66,21 @@ openssl rand -base64 32
 JWT_SECRET=TuClaveSeguraDeAlMenos32CaracteresAqui123456
 ```
 
+#### 2B. (Opcional - Solo si deseas HTTPS en el Frontend) Crear archivo `.env` en la carpeta `frontend/`
+
+**Crea un archivo `frontend/.env` con el siguiente contenido:**
+
+```env
+PORT=3001
+HTTPS=true
+SSL_CRT_FILE=cert.pem
+SSL_KEY_FILE=key.pem
+```
+
+**Cómo crear el archivo:**
+- **Windows:** Abre un editor de texto, pega el contenido, guarda como `.env` en la carpeta `frontend/`
+- **macOS/Linux:** Crea el archivo con `nano frontend/.env` o `vi frontend/.env`
+
 ### Paso 3: Instalar MongoDB (Si es Necesario)
 
 #### Opción A: MongoDB Local (Windows)
@@ -86,11 +103,13 @@ JWT_SECRET=TuClaveSeguraDeAlMenos32CaracteresAqui123456
    - Ejemplo completo: `mongodb+srv://miusuario:micontraseña@cluster0.mongodb.net/todolistweb`
 6. Copiar la URL completa en `MONGODB` del `.env`
 
-### Paso 4: Generar Certificados SSL/TLS para el Backend
+### Paso 4: Generar Certificados SSL/TLS
 
-El backend usa HTTPS, necesitamos certificados:
+#### Opción A: Backend HTTPS + Frontend HTTP (Recomendado)
 
-#### En Windows (PowerShell Admin):
+Generar certificados **SOLO para el backend:**
+
+**En Windows (PowerShell Admin):**
 
 ```powershell
 # Instalar mkcert (opción 1 - recomendado con winget)
@@ -98,9 +117,6 @@ winget install FiloSottile.mkcert
 
 # O si prefieres Chocolatey:
 # choco install mkcert -y
-
-# O descargar manualmente:
-# https://github.com/FiloSottile/mkcert/releases
 
 # Generar certificados en la carpeta backend/
 cd backend
@@ -111,7 +127,7 @@ ren localhost.pem cert.pem
 ren localhost-key.pem key.pem
 ```
 
-#### En macOS/Linux:
+**En macOS/Linux:**
 
 ```bash
 # Instalar mkcert
@@ -125,6 +141,44 @@ mkcert localhost
 mv localhost.pem cert.pem
 mv localhost-key.pem key.pem
 ```
+
+#### Opción B: Backend HTTPS + Frontend HTTPS
+
+Si prefieres que AMBOS usen HTTPS, también generar certificados para el frontend:
+
+**En Windows (PowerShell Admin):**
+
+```powershell
+# Generar certificados en la carpeta frontend/
+cd ../frontend
+mkcert localhost
+
+# Renombrar los archivos generados
+ren localhost.pem cert.pem
+ren localhost-key.pem key.pem
+```
+
+**En macOS/Linux:**
+
+```bash
+# Generar certificados en la carpeta frontend/
+cd ../frontend
+mkcert localhost
+
+# Renombrar los archivos
+mv localhost.pem cert.pem
+mv localhost-key.pem key.pem
+```
+
+**El archivo `frontend/.env` ya debería estar creado en el Paso 2B.**
+
+**¡Listo!** Con el `.env` configurado, React automáticamente usará el puerto 3001 cuando ejecutes `npm run dev`.
+
+**Nota:** Si usas Opción B, el frontend será accesible en `https://localhost:3001`
+
+---
+
+**Para este proyecto, recomendamos Opción A**
 
 ### Paso 5: Instalar Dependencias
 
@@ -169,11 +223,12 @@ Desde la **raíz del proyecto**, ejecuta:
 npm run dev
 ```
 
-Esto inicia **backend y frontend simultáneamente**:
-- Backend: https://localhost:3000
-- Frontend: http://localhost:3000 (se abrirá automáticamente)
+**Según la opción elegida en Paso 4:**
 
-**Esperado:**
+**Si elegiste Opción A (Backend HTTPS + Frontend HTTP - Recomendado):**
+- Backend: https://localhost:3000 (HTTPS con certificado)
+- Frontend: http://localhost:3000 (HTTP - se abrirá automáticamente)
+
 ```
 Conectado a MongoDB
 Servidor corriendo en https://localhost:3000
@@ -181,14 +236,29 @@ Webpack compilando...
 Compilation successful
 ```
 
+**Si elegiste Opción B (Backend HTTPS + Frontend HTTPS):**
+- Backend: https://localhost:3000 (HTTPS con certificado)
+- Frontend: https://localhost:3001 (HTTPS con certificado)
+
+**Nota importante:** El navegador podría advertir sobre certificados no confiables en localhost. Esto es **normal y seguro** - son certificados generados localmente con mkcert.
+
 ### Paso 8: Prueba la Aplicación
 
+**Si elegiste Opción A:**
 1. Abre [http://localhost:3000](http://localhost:3000) en tu navegador
-2. **Acepta el certificado de seguridad** (el navegador advertirá que no es confiable - esto es normal para localhost)
-3. Inicia sesión con una de las credenciales de prueba:
-   - Email: `david.gutierrez@gmail.com`
-   - Contraseña: `David12345W`
-4. Prueba la aplicación
+2. Inicia sesión con una de las credenciales de prueba
+3. Prueba la app
+
+**Si elegiste Opción B (Frontend HTTPS):**
+1. Abre [https://localhost:3001](https://localhost:3001) en tu navegador
+2. El navegador advertirá sobre certificado no confiable (esto es normal)
+3. Haz clic en "Advanced" > "Proceed to localhost" (o similar según el navegador)
+4. Inicia sesión con una de las credenciales de prueba
+5. Prueba la app
+
+**Credenciales:**
+- Email: `david.gutierrez@gmail.com` | Contraseña: `David12345W`
+- Email: `oliver.chambi@gmail.com` | Contraseña: `Oliver12345W`
 
 ---
 
