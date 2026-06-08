@@ -2,7 +2,7 @@
 
 Aplicación de gestión de tareas (TODO List) con autenticación JWT, construida con **Node.js + Express** en el backend y **React** en el frontend.
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalados:
 
@@ -14,7 +14,7 @@ Antes de comenzar, asegúrate de tener instalados:
 - **Git** - [Descargar](https://git-scm.com/)
 - **mkcert** (para generar certificados SSL/TLS locales) - [Instrucciones](https://github.com/FiloSottile/mkcert)
 
-## 🚀 Instalación y Despliegue en Localhost
+## Instalación y Despliegue en Localhost
 
 ### Paso 1: Clonar el Repositorio
 
@@ -47,7 +47,8 @@ PORT=3000
 MONGODB=mongodb://localhost:27017/todolistweb
 
 # Opción 2 - MongoDB Atlas (nube)
-# MONGODB=mongodb+srv://usuario:contraseña@cluster.mongodb.net/todolistweb
+# MONGODB=mongodb+srv://usuario_real:contraseña_real@cluster0.mongodb.net/todolistweb
+# Reemplazar: usuario_real, contraseña_real, cluster0 con tus datos
 
 # Clave secreta para JWT (genera una segura)
 JWT_SECRET=TuClaveSecretaDeAlMenos32CaracteresParaSerSegura123456
@@ -78,7 +79,12 @@ JWT_SECRET=TuClaveSeguraDeAlMenos32CaracteresAqui123456
 2. Crear una cuenta gratuita
 3. Crear un cluster (elegir la región más cercana)
 4. Crear un usuario y contraseña para la base de datos
-5. Obtener la cadena de conexión y copiarla en `MONGODB` del `.env`
+5. En la sección "Connect", copiar la cadena de conexión y reemplazar:
+   - `<username>` → tu usuario de base de datos
+   - `<password>` → tu contraseña de base de datos
+   - `<cluster>` → nombre de tu cluster (ej: cluster0)
+   - Ejemplo completo: `mongodb+srv://miusuario:micontraseña@cluster0.mongodb.net/todolistweb`
+6. Copiar la URL completa en `MONGODB` del `.env`
 
 ### Paso 4: Generar Certificados SSL/TLS para el Backend
 
@@ -182,9 +188,9 @@ Compilation successful
 
 ---
 
-## 🔐 Seguridad - Información Importante
+## Seguridad - Información Importante
 
-### ⚠️ Variables de Entorno Sensibles
+### Variables de Entorno Sensibles
 
 **NUNCA commit a Git:**
 - Archivos `.env` (está en `.gitignore`)
@@ -202,7 +208,7 @@ Las credenciales de prueba incluidas en `seed.js` son **SOLO para desarrollo loc
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 todoListWeb/
@@ -234,7 +240,7 @@ todoListWeb/
 
 ---
 
-## 🛠️ Comandos Útiles
+## Comandos Útiles
 
 ### Comando Principal (Recomendado)
 
@@ -272,7 +278,7 @@ npm test
 
 ---
 
-## 🐛 Solución de Problemas
+## Solución de Problemas
 
 ### Error: "Cannot find module 'dotenv'"
 ```bash
@@ -302,7 +308,7 @@ npm install
 
 ---
 
-## 📚 Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 **Backend:**
 - Node.js + Express.js
@@ -318,19 +324,13 @@ npm install
 
 ---
 
-## 📝 Licencia
+## Licencia
 
 ISC
 
 ---
 
-## 👥 Autores
+## Autores
 
 - David Gutierrez
 - Oliver Chambi
-
----
-
-## 📞 Soporte
-
-Para reportar problemas o sugerencias, abre un [issue en GitHub](https://github.com/Jaodeivid/todoListWeb/issues).
