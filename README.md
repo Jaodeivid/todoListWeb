@@ -1,0 +1,336 @@
+# TodoList Web Application
+
+Aplicación de gestión de tareas (TODO List) con autenticación JWT, construida con **Node.js + Express** en el backend y **React** en el frontend.
+
+## 📋 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalados:
+
+- **Node.js** (versión 14 o superior) - [Descargar](https://nodejs.org/)
+- **npm** (viene con Node.js)
+- **MongoDB** (versión 4.4 o superior)
+  - **Opción Local**: [Descargar MongoDB Community](https://www.mongodb.com/try/download/community)
+  - **Opción Cloud**: [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) (recomendado para pruebas rápidas)
+- **Git** - [Descargar](https://git-scm.com/)
+- **mkcert** (para generar certificados SSL/TLS locales) - [Instrucciones](https://github.com/FiloSottile/mkcert)
+
+## 🚀 Instalación y Despliegue en Localhost
+
+### Paso 1: Clonar el Repositorio
+
+```bash
+git clone https://github.com/Jaodeivid/todoListWeb.git
+cd todoListWeb
+```
+
+### Paso 2: Configurar Variables de Entorno
+
+#### Crear archivo `.env` en la carpeta `backend/`
+
+```bash
+cd backend
+# En Windows
+copy .env.example .env
+
+# En macOS/Linux
+cp .env.example .env
+```
+
+**Editar el archivo `backend/.env` con tus valores:**
+
+```env
+# Puerto del servidor (por defecto 3000)
+PORT=3000
+
+# Conexión a MongoDB
+# Opción 1 - Local (si tienes MongoDB instalado localmente)
+MONGODB=mongodb://localhost:27017/todolistweb
+
+# Opción 2 - MongoDB Atlas (nube)
+# MONGODB=mongodb+srv://usuario:contraseña@cluster.mongodb.net/todolistweb
+
+# Clave secreta para JWT (genera una segura)
+JWT_SECRET=TuClaveSecretaDeAlMenos32CaracteresParaSerSegura123456
+```
+
+**Para generar una clave segura para JWT:**
+
+```bash
+# En macOS/Linux
+openssl rand -base64 32
+
+# O simplemente usa una cadena manual segura:
+JWT_SECRET=TuClaveSeguraDeAlMenos32CaracteresAqui123456
+```
+
+### Paso 3: Instalar MongoDB (Si es Necesario)
+
+#### Opción A: MongoDB Local (Windows)
+
+1. [Descargar MongoDB Community Edition](https://www.mongodb.com/try/download/community)
+2. Ejecutar el instalador y seguir los pasos
+3. Verificar que MongoDB está corriendo (debería iniciar como servicio automáticamente)
+4. Para verificar: `mongosh` o `mongo` en terminal
+
+#### Opción B: MongoDB Atlas (Cloud - Recomendado para Pruebas)
+
+1. Ir a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Crear una cuenta gratuita
+3. Crear un cluster (elegir la región más cercana)
+4. Crear un usuario y contraseña para la base de datos
+5. Obtener la cadena de conexión y copiarla en `MONGODB` del `.env`
+
+### Paso 4: Generar Certificados SSL/TLS para el Backend
+
+El backend usa HTTPS, necesitamos certificados:
+
+#### En Windows (PowerShell Admin):
+
+```powershell
+# Instalar mkcert
+choco install mkcert -y
+
+# O si no tienes Chocolatey, instalar desde https://github.com/FiloSottile/mkcert/releases
+
+# Generar certificados en la carpeta backend/
+cd backend
+mkcert localhost
+
+# Renombrar los archivos generados
+ren localhost.pem cert.pem
+ren localhost-key.pem key.pem
+```
+
+#### En macOS/Linux:
+
+```bash
+# Instalar mkcert
+brew install mkcert
+
+# Generar certificados en la carpeta backend/
+cd backend
+mkcert localhost
+
+# Renombrar los archivos
+mv localhost.pem cert.pem
+mv localhost-key.pem key.pem
+```
+
+### Paso 5: Instalar Dependencias
+
+#### Backend:
+
+```bash
+cd backend
+npm install
+```
+
+#### Frontend (en otra terminal):
+
+```bash
+cd frontend
+npm install
+```
+
+### Paso 6: Cargar Datos de Prueba (Seed)
+
+El proyecto incluye un script `seed.js` que carga automáticamente usuarios y tareas de prueba.
+
+```bash
+cd backend
+npm run seed
+```
+
+**Credenciales de prueba que se cargarán:**
+
+```
+Email: david.gutierrez@gmail.com
+Contraseña: David12345W
+
+Email: oliver.chambi@gmail.com
+Contraseña: Oliver12345W
+```
+
+### Paso 7: Iniciar la Aplicación
+
+Desde la **raíz del proyecto**, ejecuta:
+
+```bash
+npm run dev
+```
+
+Esto inicia **backend y frontend simultáneamente**:
+- Backend: https://localhost:3000
+- Frontend: http://localhost:3000 (se abrirá automáticamente)
+
+**Esperado:**
+```
+Conectado a MongoDB
+Servidor corriendo en https://localhost:3000
+Webpack compilando...
+Compilation successful
+```
+
+### Paso 8: Prueba la Aplicación
+
+1. Abre [http://localhost:3000](http://localhost:3000) en tu navegador
+2. **Acepta el certificado de seguridad** (el navegador advertirá que no es confiable - esto es normal para localhost)
+3. Inicia sesión con una de las credenciales de prueba:
+   - Email: `david.gutierrez@gmail.com`
+   - Contraseña: `David12345W`
+4. ¡Explora y prueba la aplicación!
+
+---
+
+## 🔐 Seguridad - Información Importante
+
+### ⚠️ Variables de Entorno Sensibles
+
+**NUNCA commit a Git:**
+- Archivos `.env` (está en `.gitignore`)
+- Certificados SSL (`key.pem`, `cert.pem`)
+- Tokens o credenciales
+
+El archivo `.env.example` se proporciona como template y SÍ está en Git (sin valores sensibles).
+
+### Credenciales de Prueba
+
+Las credenciales de prueba incluidas en `seed.js` son **SOLO para desarrollo local**. Para producción:
+- Cambiar todas las contraseñas
+- Usar bases de datos dedicadas
+- Implementar políticas de contraseñas fuertes
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+todoListWeb/
+├── backend/
+│   ├── app.js                 # Punto de entrada del servidor
+│   ├── seed.js               # Script para cargar datos de prueba
+│   ├── package.json          # Dependencias del backend
+│   ├── .env.example          # Template de variables de entorno
+│   ├── .env                  # Archivo local (en .gitignore)
+│   ├── key.pem               # Certificado privado SSL (en .gitignore)
+│   ├── cert.pem              # Certificado público SSL (en .gitignore)
+│   ├── controllers/          # Lógica de negocio (auth, tasks, files)
+│   ├── models/               # Esquemas de MongoDB
+│   ├── routes/               # Rutas de la API
+│   ├── middleware/           # Middleware de autenticación
+│   └── uploads/              # Archivos subidos por usuarios
+├── frontend/
+│   ├── package.json          # Dependencias del frontend
+│   ├── public/               # Archivos estáticos
+│   └── src/
+│       ├── App.js            # Componente raíz
+│       ├── components/       # Componentes React
+│       ├── context/          # Contexto de autenticación
+│       └── services/         # Servicios API
+├── .env.example              # Template de variables
+├── .gitignore                # Archivos ignorados por Git
+└── README.md                 # Este archivo
+```
+
+---
+
+## 🛠️ Comandos Útiles
+
+### Comando Principal (Recomendado)
+
+```bash
+# Desde la raíz del proyecto - inicia backend y frontend simultáneamente
+npm run dev
+```
+
+### Backend (Individual)
+
+```bash
+cd backend
+
+# Iniciar servidor solo
+npm start
+
+# Cargar datos de prueba
+npm run seed
+```
+
+### Frontend (Individual)
+
+```bash
+cd frontend
+
+# Iniciar en desarrollo solo
+npm start
+
+# Compilar para producción
+npm run build
+
+# Ejecutar tests
+npm test
+```
+
+---
+
+## 🐛 Solución de Problemas
+
+### Error: "Cannot find module 'dotenv'"
+```bash
+cd backend
+npm install
+```
+
+### Error: "MONGODB connection failed"
+- Verifica que MongoDB está corriendo
+- Verifica la URL en `.env` es correcta
+- Si usas Atlas, verifica que tu IP está en la whitelist
+
+### Error: "EADDRINUSE: address already in use :::3000"
+- El puerto 3000 ya está en uso
+- Cambia el valor de `PORT` en `.env`
+- O cierra la aplicación que está usando ese puerto
+
+### Error: "Certificate error" / "self signed certificate"
+- Es normal en localhost
+- En navegadores modernos, hace clic en "Advanced" > "Proceed to localhost"
+- La aplicación funcionará correctamente
+
+### El seed.js no carga datos
+- Verifica que MongoDB está corriendo
+- Verifica la conexión en `.env`
+- Asegúrate de estar en la carpeta `backend/`
+
+---
+
+## 📚 Tecnologías Utilizadas
+
+**Backend:**
+- Node.js + Express.js
+- MongoDB + Mongoose
+- JWT para autenticación
+- bcryptjs para encriptación de contraseñas
+- Multer para carga de archivos
+
+**Frontend:**
+- React 18
+- React Context API para manejo de estado
+- Fetch API para llamadas HTTP
+
+---
+
+## 📝 Licencia
+
+ISC
+
+---
+
+## 👥 Autores
+
+- David Gutierrez
+- Oliver Chambi
+
+---
+
+## 📞 Soporte
+
+Para reportar problemas o sugerencias, abre un [issue en GitHub](https://github.com/Jaodeivid/todoListWeb/issues).
