@@ -57,7 +57,7 @@ JWT_SECRET=TuClaveSecretaDeAlMenos32CaracteresParaSerSegura123456
 **Para generar una clave segura para JWT:**
 
 ```bash
-# En macOS/Linux
+# En macOS/Linux(terminal de git)
 openssl rand -base64 32
 
 # O simplemente usa una cadena manual segura:
@@ -93,10 +93,14 @@ El backend usa HTTPS, necesitamos certificados:
 #### En Windows (PowerShell Admin):
 
 ```powershell
-# Instalar mkcert
-choco install mkcert -y
+# Instalar mkcert (opción 1 - recomendado con winget)
+winget install FiloSottile.mkcert
 
-# O si no tienes Chocolatey, instalar desde https://github.com/FiloSottile/mkcert/releases
+# O si prefieres Chocolatey:
+# choco install mkcert -y
+
+# O descargar manualmente:
+# https://github.com/FiloSottile/mkcert/releases
 
 # Generar certificados en la carpeta backend/
 cd backend
@@ -184,15 +188,15 @@ Compilation successful
 3. Inicia sesión con una de las credenciales de prueba:
    - Email: `david.gutierrez@gmail.com`
    - Contraseña: `David12345W`
-4. ¡Explora y prueba la aplicación!
+4. Prueba la aplicación
 
 ---
 
-## Seguridad - Información Importante
+## Información Importante
 
 ### Variables de Entorno Sensibles
 
-**NUNCA commit a Git:**
+**Por seguridad no de realizan commit de estos archivos**
 - Archivos `.env` (está en `.gitignore`)
 - Certificados SSL (`key.pem`, `cert.pem`)
 - Tokens o credenciales
@@ -201,10 +205,7 @@ El archivo `.env.example` se proporciona como template y SÍ está en Git (sin v
 
 ### Credenciales de Prueba
 
-Las credenciales de prueba incluidas en `seed.js` son **SOLO para desarrollo local**. Para producción:
-- Cambiar todas las contraseñas
-- Usar bases de datos dedicadas
-- Implementar políticas de contraseñas fuertes
+Las credenciales de prueba incluidas en `seed.js` son **SOLO para desarrollo local**. 
 
 ---
 
